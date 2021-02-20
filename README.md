@@ -5,7 +5,7 @@ For this project I wanted to explore the data I have generated through my use of
 The following reports document all the heavy lifting
 
 - [Wrangling Data](wrangling-data.md)
-- [Time Series Plots](time-series.plots.md)
+- [Time Series Plots](time-series-plots.md)
 - [Word Clouds and Sentiment Analysis](sentiment-analysis.md)
 
 Check out the poster below for the finished product.
