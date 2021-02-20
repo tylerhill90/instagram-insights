@@ -2,8 +2,8 @@ Data/
 PeerReviews/
 Plots/
 *.*
-!README.md
 !*.gitignore
+!*.md
 !*.Rmd
 !*.html
 !*.pdf
