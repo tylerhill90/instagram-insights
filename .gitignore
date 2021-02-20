@@ -1,0 +1,10 @@
+Data/
+PeerReviews/
+*.*
+!.gitignore
+!.Rmd
+!.html
+!.pdf
+!.png
+!.jpg
+!.svg
