@@ -2,6 +2,7 @@ Data/
 PeerReviews/
 Plots/
 *.*
+!README.md
 !*.gitignore
 !*.Rmd
 !*.html
