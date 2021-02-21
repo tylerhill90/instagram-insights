@@ -10,3 +10,4 @@ Plots/
 !*.jpg
 !*.png
 !*.svg
+.Rproj.user

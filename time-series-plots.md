@@ -1,18 +1,11 @@
----
-title: "Time Series Plots"
-author: "Tyler Hill"
-date: "2/12/2021"
-output:
-  html_document:
-    keep_md: true
----
+Time Series Plots
+================
+Tyler Hill
+2/12/2021
 
+-----
 
-
-***
-
-
-```r
+``` r
 # Load all necessary libraries
 library(tidyverse)
 library(lubridate)
@@ -24,16 +17,24 @@ load(data_f)
 
 # Monthly Statstics vs Overlaid Annual Posting Frequency by Month
 
-I have been debating on the best method of visualizing my time series data as how I have interacted with Instagram has changed over the years. In the past I had lots of interaction with the platform when I was actively trying to gain followers but now I have much less interaction as I have started to care much less about my social media presence. I would like to find a method of visualizing this pattern and then maybe try to rework my sentiment analysis visualizations in a time-bound format to maybe reflect these findings.
+I have been debating on the best method of visualizing my time series
+data as how I have interacted with Instagram has changed over the years.
+In the past I had lots of interaction with the platform when I was
+actively trying to gain followers but now I have much less interaction
+as I have started to care much less about my social media presence. I
+would like to find a method of visualizing this pattern and then maybe
+try to rework my sentiment analysis visualizations in a time-bound
+format to maybe reflect these findings.
 
-Mt first idea was to average the posting frequency of each month throughout my five years or so on the platform so I will start here.
+Mt first idea was to average the posting frequency of each month
+throughout my five years or so on the platform so I will start here.
 
 ## Total Counts, Mean, and Median Posting Statistics by Month
 
-First I will examine the total number of posts in a given month over my entire history on the platform grouped by the posting type.
+First I will examine the total number of posts in a given month over my
+entire history on the platform grouped by the posting type.
 
-
-```r
+``` r
 # Add a month and year column to df_posts
 df_posts <- df_posts %>%
   mutate(month = month(date), year = year(date))
@@ -50,14 +51,17 @@ df_posts %>%
   scale_fill_manual("legend", values = rev(col_pal_5))
 ```
 
-![](time-series-plots_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+![](time-series-plots_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-From the graph we can see I do most of my posting in July. I don't find this very surprising as that is a great month for rock climbing and I mainly use Instagram to document my climbing and interact with the community.
+From the graph we can see I do most of my posting in July. I don’t find
+this very surprising as that is a great month for rock climbing and I
+mainly use Instagram to document my climbing and interact with the
+community.
 
-Let's see if this pattern remains after we take the average of each month throughout the years.
+Let’s see if this pattern remains after we take the average of each
+month throughout the years.
 
-
-```r
+``` r
 # Select data only from full years 
 df_month_avgs <- df_posts %>% 
   select(month, year, type) %>%
@@ -73,14 +77,18 @@ df_month_avgs %>%
   scale_x_continuous(breaks=1:12)
 ```
 
-![](time-series-plots_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](time-series-plots_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-From the plot above we get an interesting finding in that we now see that March is the month with the highest average posting frequency. Re-examining the first bar graph I generated we can see that March is indeed the next highest month in terms of overall counts. This must mean that there is one outlier year where I posted a lot in July.
+From the plot above we get an interesting finding in that we now see
+that March is the month with the highest average posting frequency.
+Re-examining the first bar graph I generated we can see that March is
+indeed the next highest month in terms of overall counts. This must mean
+that there is one outlier year where I posted a lot in July.
 
-Let's examine another line graph, this time comparing the median posting frequency by month.
+Let’s examine another line graph, this time comparing the median posting
+frequency by month.
 
-
-```r
+``` r
 # Select data only from full years 
 df_month_meds <- df_posts %>% 
   select(month, year, type) %>%
@@ -96,23 +104,23 @@ df_month_meds %>%
   scale_x_continuous(breaks=1:12)
 ```
 
-![](time-series-plots_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](time-series-plots_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-Here we can see even more how I am most likely to post to my Instagram in the month of March.
+Here we can see even more how I am most likely to post to my Instagram
+in the month of March.
 
-Let's overlay these three graphs to see if this makes the trend more apparent. I'll remove the fill by type to make the visualization less cluttered looking.
+Let’s overlay these three graphs to see if this makes the trend more
+apparent. I’ll remove the fill by type to make the visualization less
+cluttered looking.
 
-
-```r
+``` r
 df_monthly_stats <- merge(df_month_avgs, df_month_meds, by="month")
 
 # Clean workspace
 rm(df_month_avgs, df_month_meds)
 ```
 
-
-
-```r
+``` r
 df_posts %>%
   select(month) %>%
   group_by(month) %>% 
@@ -131,22 +139,26 @@ df_posts %>%
        title = "Total Posts Count by Month Over Entire Time on Instagram")
 ```
 
-![](time-series-plots_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](time-series-plots_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
-```r
+``` r
 ggsave("total-post-count-monthly.pdf", width = 6, height = 4, path="./Plots")
 ```
 
-In my opinion this plot results in a nice summary of my likelihood to post in a given month while also showing a deeper story for the month of July in that there must have been a year where my posting habits changed quite drastically.
+In my opinion this plot results in a nice summary of my likelihood to
+post in a given month while also showing a deeper story for the month of
+July in that there must have been a year where my posting habits changed
+quite drastically.
 
-I'll examine my posting frequency by month on an annual basis next.
+I’ll examine my posting frequency by month on an annual basis next.
 
 ## Overlaid Annual Posting Frequency by Month
 
-Here I will be showing the total posting frequencies per month of each year on a single plot with 5 overlaid line graphs from the years 2016 through 2020.
+Here I will be showing the total posting frequencies per month of each
+year on a single plot with 5 overlaid line graphs from the years 2016
+through 2020.
 
-
-```r
+``` r
 df_posts %>%
   select(year, month) %>% 
   group_by(year, month) %>% 
@@ -163,20 +175,25 @@ df_posts %>%
        title = "Monthly Posting Frequency Each Year")
 ```
 
-![](time-series-plots_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](time-series-plots_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-```r
+``` r
 ggsave("annual-post-freq.pdf", width = 6, height = 4, path="./Plots")
 ```
 
-The above plot is probably the most informative yet as you can really see where there are local spikes in my posting history. As I should have guessed, the findings I previously uncovered are due to the extremely increased activity I had on Instagram during the initial Covid-19 lock-down in 2020. I think showing this plot first in my poster will have the largest impact and kickoff the story of the visual narrative that I can later explain a bit further with the second to last plot.  
- 
+The above plot is probably the most informative yet as you can really
+see where there are local spikes in my posting history. As I should have
+guessed, the findings I previously uncovered are due to the extremely
+increased activity I had on Instagram during the initial Covid-19
+lock-down in 2020. I think showing this plot first in my poster will
+have the largest impact and kickoff the story of the visual narrative
+that I can later explain a bit further with the second to last plot.
+
 ## Gained Followers
 
 Next I will plot my monthly gained followers grouped by year as well.
 
-
-```r
+``` r
 # Add a month and year column to df_followers
 df_followers <- df_followers %>%
   mutate(month = month(date), year = year(date)) %>% 
@@ -198,20 +215,25 @@ df_followers %>%
        title = "Monthly Followers Gained Each Year")
 ```
 
-![](time-series-plots_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](time-series-plots_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-```r
+``` r
 ggsave("annual-followers-gained.pdf", width = 6, height = 4, path="./Plots")
 ```
 
-This is an interesting outcome when compared to the previous plot because it shows that even though I was posting a lot in March of 2020 I didn't gain that many followers. This is contrasted by my spike in posting in July of 2018 where I also gained a lot of followers as well.
+This is an interesting outcome when compared to the previous plot
+because it shows that even though I was posting a lot in March of 2020 I
+didn’t gain that many followers. This is contrasted by my spike in
+posting in July of 2018 where I also gained a lot of followers as well.
 
 # Sentiment Analysis of Monthly Posting
 
-To better flush out my visual story I wonder if I can spot any trends in the sentiment of my posts grouped by month. Am I more positive when I post more often or vice versa? Is there a spike in followers when my posts are more positive?
+To better flush out my visual story I wonder if I can spot any trends in
+the sentiment of my posts grouped by month. Am I more positive when I
+post more often or vice versa? Is there a spike in followers when my
+posts are more positive?
 
-
-```r
+``` r
 for (y in 2016:2020) {
   for (m in 1:12) {
     ls_months <- df_posts %>% 
@@ -243,4 +265,9 @@ for (y in 2016:2020) {
 ![2018-7](./Plots/Monthly-Sentiment/2018-7-sentiment.pdf)
 ![2020-3](./Plots/Monthly-Sentiment/2020-3-sentiment.pdf)
 
-It is hard to see any trends without lining up these sentiment analysis plots with the time series plots from above but checking the plots for 2018-7 and 2020-3 we can see that the proportions of positive, neutral, negative sentiment are very similar between these high activity months. This might indicate that the sentiment analysis does not track well with followers gained.
+It is hard to see any trends without lining up these sentiment analysis
+plots with the time series plots from above but checking the plots for
+2018-7 and 2020-3 we can see that the proportions of positive, neutral,
+negative sentiment are very similar between these high activity months.
+This might indicate that the sentiment analysis does not track well with
+followers gained.

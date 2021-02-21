@@ -3,8 +3,10 @@ title: "Wrangling Data"
 author: "Tyler Hill"
 date: "2/12/2021"
 output:
-  html_document:
-    keep_md: true
+  github_document: default
+  html_document: default
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })
 ---
 
 ```{r setup, include=FALSE}
@@ -256,7 +258,7 @@ df_posts <- df_posts[!duplicated(df_posts$caption), ]
 # Clean workspace
 rm(media_f, media_f2, caption, caption2, date, date2, type, type2, df_photos, df_stories, df_videos, df_media, df_media2)
 
-# Save workspace <- <- <- <- <- <- <- <- <- <- <- <- <- <- <- %>% %>% %>% %>% %>% <- <- <- <- <- <- <- <- 
+# Save workspace 
 save.image(file='data.RData')
 ```
 

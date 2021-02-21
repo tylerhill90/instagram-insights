@@ -3,8 +3,10 @@ title: "Time Series Plots"
 author: "Tyler Hill"
 date: "2/12/2021"
 output:
-  html_document:
-    keep_md: true
+  github_document: default
+  html_document: default
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })
 ---
 
 ```{r setup, include=FALSE}

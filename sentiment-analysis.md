@@ -1,18 +1,11 @@
----
-title: "Word Clouds and Sentiment Analysis"
-author: "Tyler Hill"
-date: "2/12/2021"
-output:
-  html_document:
-    keep_md: true
----
+Word Clouds and Sentiment Analysis
+================
+Tyler Hill
+2/12/2021
 
+-----
 
-
-***
-
-
-```r
+``` r
 # Load all necessary libraries
 library(tidyverse)
 library(tm)
@@ -28,10 +21,19 @@ load(data_f)
 
 # Word Clouds
 
-In order to do make word clouds we will need to collect our text data in a "Corpus" for the package "tm" to work with. From there we will need to do some further cleaning of our data for the analysis. This includes converting all characters to lowercase, removing hastags, usernames, [stopwords](https://en.wikipedia.org/wiki/Stop_word), numbers, punctuation, and any extra white space. We also want to perform [text stemming](https://en.wikipedia.org/wiki/Stemming) which will reduce words to their root form (ie. stemming to stem). We will do this for df_comments, df_followers, and df_messages data. We will first make a generic function for the cleaning and then use it on each textual observation in each df as well as the entirety of the text in a df.
+In order to do make word clouds we will need to collect our text data in
+a “Corpus” for the package “tm” to work with. From there we will need to
+do some further cleaning of our data for the analysis. This includes
+converting all characters to lowercase, removing hastags, usernames,
+[stopwords](https://en.wikipedia.org/wiki/Stop_word), numbers,
+punctuation, and any extra white space. We also want to perform [text
+stemming](https://en.wikipedia.org/wiki/Stemming) which will reduce
+words to their root form (ie. stemming to stem). We will do this for
+df\_comments, df\_followers, and df\_messages data. We will first make a
+generic function for the cleaning and then use it on each textual
+observation in each df as well as the entirety of the text in a df.
 
-
-```r
+``` r
 clean_text <- function(text) {
   # Remove emojis, hashtags, and usernames
   text <- gsub("[^[:ascii:]]|#[^\\s]*|@[^\\s]*", "", text, perl=T)
@@ -55,21 +57,20 @@ clean_text <- function(text) {
 }
 ```
 
-
 ## Comments
 
-Let's use our function to clean the entirety of the comments text data
+Let’s use our function to clean the entirety of the comments text data
 
-
-```r
+``` r
 text <- paste(df_comments$comment, collapse = " ")
 
 text_corp <- clean_text(text)
 ```
-Now lets examine the frequency of common words by building a Documnet Matrix with the tm package.
 
+Now lets examine the frequency of common words by building a Documnet
+Matrix with the tm package.
 
-```r
+``` r
 # Build Document Matrix
 text_dm <- TermDocumentMatrix(text_corp)
 dm <- as.matrix(text_dm)
@@ -80,24 +81,21 @@ comments_dm_df <- data.frame(word = names(dm_v),freq=dm_v)
 head(comments_dm_df, 10)
 ```
 
-```
-##        word freq
-## look   look   27
-## climb climb   25
-## bud     bud   23
-## nice   nice   20
-## good   good   16
-## haha   haha   16
-## rad     rad   16
-## get     get   14
-## great great   14
-## like   like   14
-```
+    ##        word freq
+    ## look   look   27
+    ## climb climb   25
+    ## bud     bud   23
+    ## nice   nice   20
+    ## good   good   16
+    ## haha   haha   16
+    ## rad     rad   16
+    ## get     get   14
+    ## great great   14
+    ## like   like   14
 
-Now let's look at its word cloud.
+Now let’s look at its word cloud.
 
-
-```r
+``` r
 # Set a color palette to use that reflects Instagrams brand
 col_pal_5 <- rev(c("#4845A3", "#A7429E", "#CB2B56", "#EB722D", "#FADD27"))
 col_pal_12 <- c("#F92727", "#F93E27", "#F95527", "#F96B27", "#FA8227", "#FA9927", "#FAB027", "#FAC627", "#FADD27", "#766BAA", "#5C55C5", "#413EDF")
@@ -112,10 +110,10 @@ wordcloud(words = comments_dm_df$word, freq = comments_dm_df$freq, min.freq = 5,
 
 ## Posts
 
-We'll use the same method from above to generate the word cloud for the posts data.
+We’ll use the same method from above to generate the word cloud for the
+posts data.
 
-
-```r
+``` r
 text <- paste(df_posts$caption, collapse = " ")
 
 text_corp <- clean_text(text)
@@ -130,21 +128,19 @@ posts_dm_df <- data.frame(word = names(dm_v),freq=dm_v)
 head(posts_dm_df, 10)
 ```
 
-```
-##            word freq
-## day         day   28
-## fun         fun   28
-## time       time   22
-## back       back   21
-## boulder boulder   18
-## today     today   18
-## get         get   17
-## last       last   17
-## summit   summit   16
-## climb     climb   15
-```
+    ##            word freq
+    ## day         day   28
+    ## fun         fun   28
+    ## time       time   22
+    ## back       back   21
+    ## boulder boulder   18
+    ## today     today   18
+    ## get         get   17
+    ## last       last   17
+    ## summit   summit   16
+    ## climb     climb   15
 
-```r
+``` r
 # Set a random seed so word clouds will look the same each rendering
 set.seed(651990)
 
@@ -157,10 +153,11 @@ wordcloud(words = posts_dm_df$word, freq = posts_dm_df$freq, min.freq = 5, max.w
 
 ## Messages
 
-We'll use the same method again to generate the word cloud for the messages data. First we will look at a word cloud built from messages I sent.
+We’ll use the same method again to generate the word cloud for the
+messages data. First we will look at a word cloud built from messages I
+sent.
 
-
-```r
+``` r
 outgoing <- df_messages %>%
   filter(sender == "Tyler Hill") %>%
   select(message)
@@ -179,21 +176,19 @@ messages_dm_df <- data.frame(word = names(dm_v),freq=dm_v)
 head(messages_dm_df, 10)
 ```
 
-```
-##        word freq
-## haha   haha  132
-## look   look  117
-## yeah   yeah  114
-## get     get  109
-## nice   nice  108
-## climb climb  104
-## fun     fun   96
-## tho     tho   95
-## just   just   92
-## back   back   90
-```
+    ##        word freq
+    ## haha   haha  132
+    ## look   look  117
+    ## yeah   yeah  114
+    ## get     get  109
+    ## nice   nice  108
+    ## climb climb  104
+    ## fun     fun   96
+    ## tho     tho   95
+    ## just   just   92
+    ## back   back   90
 
-```r
+``` r
 # Set a random seed so word clouds will look the same each rendering
 set.seed(651990)
 
@@ -204,8 +199,7 @@ wordcloud(words = messages_dm_df$word, freq = messages_dm_df$freq, min.freq = 5,
 
 Now lets look at a word cloud built from messages I have received.
 
-
-```r
+``` r
 incoming <- df_messages %>%
   filter(sender != "Tyler Hill") %>%
   select(message)
@@ -224,21 +218,19 @@ messages_dm_df <- data.frame(word = names(dm_v),freq=dm_v)
 head(messages_dm_df, 10)
 ```
 
-```
-##        word freq
-## just   just  139
-## climb climb  136
-## like   like  135
-## get     get  129
-## good   good  124
-## haha   haha  116
-## yeah   yeah  105
-## time   time   96
-## day     day   93
-## look   look   89
-```
+    ##        word freq
+    ## just   just  139
+    ## climb climb  136
+    ## like   like  135
+    ## get     get  129
+    ## good   good  124
+    ## haha   haha  116
+    ## yeah   yeah  105
+    ## time   time   96
+    ## day     day   93
+    ## look   look   89
 
-```r
+``` r
 # Set a random seed so word clouds will look the same each rendering
 set.seed(651990)
 
@@ -247,13 +239,18 @@ pdf("./Plots/wordcloud-msg-in.pdf", width=12, height=8)
 wordcloud(words = messages_dm_df$word, freq = messages_dm_df$freq, min.freq = 5, max.words=35, random.order=FALSE, rot.per=0.40, colors=col_pal_5)
 ```
 
-
 # Sentiment Analysis
 
-For the sentiment analysis we will first add a column called cleaned that has any hashtags or usernames removed. We will then use the syuzhet package to perform three different methods of sentiment analysis, syuzhet, bing, and afinn. Each of these methods produces either a positive value if the sentiment is overall postivie, a negative value for a negative sentiment, and 0 if the sentiment is neutral. We will add a column named consensus with three factors, 1, 0, and -1, that corresponds to a consensus sentiment between these three methods.
+For the sentiment analysis we will first add a column called cleaned
+that has any hashtags or usernames removed. We will then use the syuzhet
+package to perform three different methods of sentiment analysis,
+syuzhet, bing, and afinn. Each of these methods produces either a
+positive value if the sentiment is overall postivie, a negative value
+for a negative sentiment, and 0 if the sentiment is neutral. We will add
+a column named consensus with three factors, 1, 0, and -1, that
+corresponds to a consensus sentiment between these three methods.
 
-
-```r
+``` r
 # Function to find the consensus sentiment
 consensus_func <- function(df) {
   # Iterate through the df
@@ -291,10 +288,10 @@ consensus_func <- function(df) {
 
 ## Posts
 
-Let's use the syuzhet package along with the function above to analyze the posts data.
+Let’s use the syuzhet package along with the function above to analyze
+the posts data.
 
-
-```r
+``` r
 df_posts <- df_posts %>%
   mutate(cleaned = gsub("#[^\\s]*|@[^\\s]*", "", caption, perl=T)) %>%
   mutate(syuzhet = get_sentiment(cleaned, method="syuzhet")) %>%
@@ -306,22 +303,19 @@ df_posts <- consensus_func(df_posts)
 head(df_posts[c(2, 5:8)])
 ```
 
-```
-## # A tibble: 6 x 5
-##   caption                                          syuzhet  bing afinn consensus
-##   <chr>                                              <dbl> <int> <int> <fct>    
-## 1 "Miss you too @annahill_author !\nLooking forwa…     0.6    -1    -2 Negative 
-## 2 "Never gets old!"                                    0       0     0 Neutral  
-## 3 "I made dis"                                         0       0     0 Neutral  
-## 4 "I feel like a hamster in a wheel"                   0.5     1     2 Positive 
-## 5 "Crack is back!"                                    -0.5    -1     0 Negative 
-## 6 "Professional hype man"                              0.3    -1     0 Neutral
-```
+    ## # A tibble: 6 x 5
+    ##   caption                                          syuzhet  bing afinn consensus
+    ##   <chr>                                              <dbl> <int> <int> <fct>    
+    ## 1 "Miss you too @annahill_author !\nLooking forwa…     0.6    -1    -2 Negative 
+    ## 2 "Never gets old!"                                    0       0     0 Neutral  
+    ## 3 "I made dis"                                         0       0     0 Neutral  
+    ## 4 "I feel like a hamster in a wheel"                   0.5     1     2 Positive 
+    ## 5 "Crack is back!"                                    -0.5    -1     0 Negative 
+    ## 6 "Professional hype man"                              0.3    -1     0 Neutral
 
-Let's make a pie chart from the consensus data.
+Let’s make a pie chart from the consensus data.
 
-
-```r
+``` r
 df_posts %>%
   select(consensus) %>%
   count(consensus) %>%
@@ -335,18 +329,18 @@ df_posts %>%
   scale_fill_manual(values=c("Negative" = "#CB2B56", "Neutral" = "#FADD27", "Positive" = "#4845A3"))
 ```
 
-![](sentiment-analysis_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](sentiment-analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
-```r
+``` r
 ggsave("sent-anal-posts.pdf", width = 6, height = 4, path="./Plots")
 ```
 
 ## Comments
 
-We'll use the same strategy to perform sentiment analysis on the comments data.
+We’ll use the same strategy to perform sentiment analysis on the
+comments data.
 
-
-```r
+``` r
 df_comments <- df_comments %>%
   mutate(cleaned = gsub("#[^\\s]*|@[^\\s]*", "", comment, perl=T)) %>%
   mutate(syuzhet = get_sentiment(cleaned, method="syuzhet")) %>%
@@ -368,16 +362,15 @@ df_comments %>%
   scale_fill_manual(values=c("Negative" = "#CB2B56", "Neutral" = "#FADD27", "Positive" = "#4845A3"))
 ```
 
-![](sentiment-analysis_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](sentiment-analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
-```r
+``` r
 ggsave("sent-anal-comments.pdf", width = 6, height = 4, path="./Plots")
 ```
 
-## Messages  
+## Messages
 
-
-```r
+``` r
 df_messages <- df_messages %>%
   mutate(cleaned = gsub("#[^\\s]*|@[^\\s]*", "", message, perl=T)) %>%
   mutate(syuzhet = get_sentiment(cleaned, method="syuzhet")) %>%
@@ -401,9 +394,9 @@ df_messages %>%
   scale_fill_manual(values=c("Negative" = "#CB2B56", "Neutral" = "#FADD27", "Positive" = "#4845A3"))
 ```
 
-![](sentiment-analysis_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](sentiment-analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-```r
+``` r
 ggsave("sent-anal-msg-out.pdf", width = 6, height = 4, path="./Plots")
 
 # Pie chart of incoming messages
@@ -421,18 +414,16 @@ df_messages %>%
   scale_fill_manual(values=c("Negative" = "#CB2B56", "Neutral" = "#FADD27", "Positive" = "#4845A3"))
 ```
 
-![](sentiment-analysis_files/figure-html/unnamed-chunk-13-2.png)<!-- -->
+![](sentiment-analysis_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
 
-```r
+``` r
 ggsave("sent-anal-msg-in.pdf", width = 6, height = 4, path="./Plots")
 ```
 
-
-```r
+``` r
 # Clean work space
 rm(text, dm_v, text_dm, text_corp, incoming, outgoing, dm, posts_dm_df, comments_dm_df, messages_dm_df, data_f, clean_text, consensus_func)
 
 # Save workspace
 save.image(file='data.RData')
 ```
-
