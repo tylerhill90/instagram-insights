@@ -165,7 +165,7 @@ df_posts %>%
   summarise(monthly_counts = n()) %>% 
   ggplot() +
   aes(x = as.factor(month), y = monthly_counts, group = as.factor(year), color = as.factor(year)) +
-  geom_line(size = 2) +
+  geom_line(size = 1) +
   scale_x_discrete(labels=month(1:12, label=T)) +
   scale_color_manual(values=c("#4845A3", "#A7429E", "#CB2B56", "#EB722D", "#FADD27")) +
   theme_bw() +
@@ -178,7 +178,7 @@ df_posts %>%
 ![](time-series-plots_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
-ggsave("annual-post-freq.pdf", width = 6, height = 4, path="./Plots")
+ggsave("annual-post-freq.pdf", width = 7.3, height = 3.75, path="./Plots")
 ```
 
 The above plot is probably the most informative yet as you can really
@@ -205,7 +205,7 @@ df_followers %>%
   summarise(monthly_counts = n()) %>% 
   ggplot() +
   aes(x = as.factor(month), y = monthly_counts, group = as.factor(year), color = as.factor(year)) +
-  geom_line(size = 2) + 
+  geom_line(size = 1) + 
   scale_x_discrete(labels=month(1:12, label=T)) +
   scale_color_manual(values=c("#4845A3", "#A7429E", "#CB2B56", "#EB722D", "#FADD27")) +
   theme_bw() +
@@ -218,13 +218,63 @@ df_followers %>%
 ![](time-series-plots_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
-ggsave("annual-followers-gained.pdf", width = 6, height = 4, path="./Plots")
+ggsave("annual-followers-gained.pdf", width = 7.3, height = 3.75, path="./Plots")
 ```
 
 This is an interesting outcome when compared to the previous plot
 because it shows that even though I was posting a lot in March of 2020 I
 didn’t gain that many followers. This is contrasted by my spike in
 posting in July of 2018 where I also gained a lot of followers as well.
+
+Next I will examine whether my use of hashtags has any correlation with
+the other time-series analysis above. I will have to pull hashtags out
+of my comments data as well because at some point I switched from
+hashtagging my posts in the main post text to hashtagging in the first
+comment.
+
+``` r
+df_posts_monthly_hashes <- df_posts %>% 
+  group_by(year, month) %>% 
+  summarise(hashes = sum(str_count(caption, "#")))
+
+df_comments <- df_comments %>%
+  mutate(month = month(date), year = year(date))
+
+df_comments_monthly_hashes <- df_comments %>% 
+  group_by(year, month) %>% 
+  summarise(hashes = sum(str_count(comment, "#")))
+
+df_monthly_hashes <- left_join(df_posts_monthly_hashes,
+                               df_comments_monthly_hashes, 
+                               by = c("year" = "year", "month" = "month")) %>% 
+  replace_na(list(hashes.x = 0, hashes.y = 0)) %>% 
+  mutate(hashes = hashes.x + hashes.y) %>% 
+  select(year, month, hashes)
+
+df_monthly_hashes %>% 
+  ggplot() +
+  aes(x = as.factor(month), y = hashes, group = as.factor(year), color = as.factor(year)) +
+  geom_line(size = 1) + 
+  scale_x_discrete(labels=month(1:12, label=T)) +
+  scale_color_manual(values=c("#4845A3", "#A7429E", "#CB2B56", "#EB722D", "#FADD27")) +
+  theme_bw() +
+  theme(legend.title=element_blank()) +
+  labs(x = "Month",
+       y ="Hashtags Used",
+       title = "Monthly Number of Hashtags Used Each Year")
+```
+
+![](time-series-plots_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+ggsave("annual-hashes-used.jpg", width = 7.3, height = 3.75, path="./Plots")
+```
+
+This figure is interesting as it seems to show that an increase in
+hashtag usage preceeds more followers gained in the next month in 2018.
+This correlation breaks down in 2017 however. This figure also clearly
+shows how I stopped using hashtags after my break from the platform from
+January to April of 2019.
 
 # Sentiment Analysis of Monthly Posting
 
@@ -256,14 +306,16 @@ for (y in 2016:2020) {
                                    "Neutral" = "#FADD27",
                                    "Positive" = "#4845A3"))
       
+      # Save as both pdf and jpg
       ggsave(paste(y, "-", m, "-sentiment.pdf", sep = ""), width = 6, height = 4, path="./Plots/Monthly-Sentiment")
+      ggsave(paste(y, "-", m, "-sentiment.jpg", sep = ""), width = 6, height = 4, path="./Plots/Monthly-Sentiment")
     }
   }
 }
 ```
 
-![2018-7](./Plots/Monthly-Sentiment/2018-7-sentiment.pdf)
-![2020-3](./Plots/Monthly-Sentiment/2020-3-sentiment.pdf)
+![2018-7](Plots/Monthly-Sentiment/2018-7-sentiment.jpg)
+![2020-3](Plots/Monthly-Sentiment/2020-3-sentiment.jpg)
 
 It is hard to see any trends without lining up these sentiment analysis
 plots with the time series plots from above but checking the plots for
